@@ -1,0 +1,95 @@
+{
+  "references": {
+    "EuSales": {
+      "connector_config": {
+        "response_type": "HTML",
+        "url": "https://gg.deals/deals/?drm=1&minRating=0&platform=1&store=4",
+        "browser_config": {
+          "playwright": {
+            "timeout": 60000,
+            "wait": 10000,
+            "browser": "WebKit"
+          }
+        }
+      },
+      "model": {
+        "array_config": {
+          "root_path": ".deals-content #deals-list .list-items > div",
+          "item_config": {
+            "fields": {
+              "name": {
+                "base_field": {
+                  "type": "string",
+                  "path": ".game-info-title-wrapper a"
+                }
+              },
+              "link": {
+                "base_field": {
+                  "type": "string",
+                  "path": ".game-cta .shop-link",
+                  "html_attribute": "href",
+                  "generated": {
+                    "formatted": {
+                      "template": "https://gg.deals{PL}"
+                    }
+                  }
+                }
+              },
+              "discount": {
+                "base_field": {
+                  "type": "string",
+                  "path": ".price-widget .discount"
+                }
+              },
+              "price": {
+                "base_field": {
+                  "type": "string",
+                  "path": ".price-wrapper span.game-price-new"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "item": {
+    "connector_config": {
+      "response_type": "json",
+      "reference_config": {
+        "name": "EuSales"
+      }
+    },
+    "model": {
+      "base_field": {
+        "type": "array",
+        "generated": {
+          "model": {
+            "model": {
+              "base_field": {
+                "type": "boolean",
+                "generated": {
+                  "static": {
+                    "type": "boolean",
+                    "value": "true"
+                  }
+                }
+              }
+            },
+            "connector_config": {
+              "response_type": "json",
+              "url": "https://api.telegram.org/bot{{{FromEnv=BOT_TOKEN}}}/sendMessage",
+              "server_config": {
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "method": "POST",
+                "body": "{\"chat_id\":\"{{{FromEnv=CHAT_ID}}}\", \"parse_mode\":\"MarkdownV2\", \"link_preview_options\":{\"is_disabled\":true}, \"text\":\"\\*Лучшие скидки за сегодня в Steam\\*\\n\\n{{{FromExp=join(map(fromJSON(fResJson), {let name=.name; let link=.link; let price=.price; let discount=.discount; string(#index + 1) + '\\\\. [' +  reduce({{{FromURL=https://raw.githubusercontent.com/PxyUp/it_life_berlin_fitter/refs/heads/master/parts/escape_array.json}}}, replace(#acc, #, '\\\\' + #), name) + '](' + link + ')' + ' ' + reduce({{{FromURL=https://raw.githubusercontent.com/PxyUp/it_life_berlin_fitter/refs/heads/master/parts/escape_array.json}}}, replace(#acc, #, ''), price) + ' скидка *' + reduce({{{FromURL=https://raw.githubusercontent.com/PxyUp/it_life_berlin_fitter/refs/heads/master/parts/escape_array.json}}}, replace(#acc, #, ''), discount) + '*'}), '\\n')}}}\\n\\n\\\\#it\\n\\n{{{FromURL=https://raw.githubusercontent.com/PxyUp/it_life_berlin_fitter/refs/heads/master/parts/footer.json}}}\"}"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

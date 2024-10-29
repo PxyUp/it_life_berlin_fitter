@@ -1,0 +1,42 @@
+{
+  "item": {
+    "connector_config": {
+      "response_type": "json",
+      "url": "https://dev.to/api/articles?top=1&per_page=10",
+      "server_config": {
+        "method": "GET"
+      }
+    },
+    "model": {
+      "base_field": {
+        "type": "array",
+        "generated": {
+          "model": {
+            "model": {
+              "base_field": {
+                "type": "boolean",
+                "generated": {
+                  "static": {
+                    "type": "boolean",
+                    "value": "true"
+                  }
+                }
+              }
+            },
+            "connector_config": {
+              "response_type": "json",
+              "url": "https://api.telegram.org/bot{{{FromEnv=BOT_TOKEN}}}/sendMessage",
+              "server_config": {
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "method": "POST",
+                "body": "{\"chat_id\":\"{{{FromEnv=CHAT_ID}}}\", \"parse_mode\":\"MarkdownV2\", \"link_preview_options\":{\"is_disabled\":true}, \"text\":\"\\*Лучшие статьи за сегодня c Dev\\\\.to\\*\\n\\n{{{FromExp=join(map(fromJSON(fResJson), {let t=.title; string(#index + 1) + '\\\\. [' +  reduce({{{FromURL=https://raw.githubusercontent.com/PxyUp/it_life_berlin_fitter/refs/heads/master/parts/escape_array.json}}}, replace(#acc, #, ''), t) + '](' + .url + ')'}), '\\n')}}}\\n\\n\\\\#it\\n\\n{{{FromURL=https://raw.githubusercontent.com/PxyUp/it_life_berlin_fitter/refs/heads/master/parts/footer.json}}}\"}"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
