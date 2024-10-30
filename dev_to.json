@@ -31,7 +31,7 @@
                   "Content-Type": "application/json"
                 },
                 "method": "POST",
-                "body": "{\"chat_id\":\"{{{FromEnv=CHAT_ID}}}\", \"parse_mode\":\"MarkdownV2\", \"link_preview_options\":{\"is_disabled\":true}, \"text\":\"\\*Лучшие статьи за сегодня c Dev\\\\.to\\*\\n\\n{{{FromExp=join(map(fromJSON(fResJson), {let t=.title; string(#index + 1) + '\\\\. [' +  reduce({{{FromURL=https://raw.githubusercontent.com/PxyUp/it_life_berlin_fitter/refs/heads/master/parts/escape_array.json}}}, replace(#acc, #, ''), t) + '](' + .url + ')'}), '\\n')}}}\\n\\n\\\\#it\\n\\n{{{FromURL=https://raw.githubusercontent.com/PxyUp/it_life_berlin_fitter/refs/heads/master/parts/footer.json}}}\"}"
+                "body": "{\"chat_id\":\"{{{FromEnv=CHAT_ID}}}\", \"parse_mode\":\"MarkdownV2\", \"link_preview_options\":{\"is_disabled\":true}, \"text\":\"\\*Лучшие статьи за сегодня c Dev\\\\.to\\*\\n\\n{{{FromExp=join(map(fromJSON(fResJson), {let t=.title; string(#index + 1) + '\\\\. [' +  reduce({{{FromURL=https://raw.githubusercontent.com/PxyUp/it_life_berlin_fitter/refs/heads/master/parts/escape_array.ftpl}}}, replace(#acc, #, ''), t) + '](' + .url + ')'}), '\\n')}}}{{{FromURL=https://raw.githubusercontent.com/PxyUp/it_life_berlin_fitter/refs/heads/master/parts/footer.ftpl}}}\"}"
               }
             }
           }
